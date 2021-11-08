@@ -8,8 +8,7 @@ module.exports = {
         {
           title: "This is a space title",
           description: "Here I would expect a description of this space",
-          backgroundColor: "#ffffff",
-          color: "#000000",
+          userId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -17,8 +16,7 @@ module.exports = {
           title: "Outer space",
           description:
             "It is a space that is outer, rather than inner such as when you're inside your house.",
-          backgroundColor: "#ffffff",
-          color: "#000000",
+          userId: 2,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
