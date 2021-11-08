@@ -8,15 +8,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      space.belongsTo(models.user);
+      space.hasMany(models.story);
     }
   }
   space.init(
     {
       title: DataTypes.STRING,
       description: { type: DataTypes.TEXT, allowNull: false },
-      backgroundColor: DataTypes.STRING,
-      color: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
+      backgroundColor: { type: DataTypes.STRING, defaultValue: "#ffffff" },
+      color: { type: DataTypes.STRING, defaultValue: "#000000" },
     },
     {
       sequelize,
