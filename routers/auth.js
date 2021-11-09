@@ -4,6 +4,7 @@ const { toJWT } = require("../auth/jwt");
 const authMiddleware = require("../auth/middleware");
 const User = require("../models/").user;
 const Space = require("../models/").space;
+const Story = require("../models/").story;
 const { SALT_ROUNDS } = require("../config/constants");
 
 const router = new Router();
@@ -28,7 +29,13 @@ router.post("/login", async (req, res, next) => {
 
     delete user.dataValues["password"]; // don't send back the password hash
     const token = toJWT({ userId: user.id });
-    return res.status(200).send({ token, ...user.dataValues });
+    console.log("About to try to get userSpace...");
+    const userSpace = Space.findOne(
+      { where: { userId: user.id } },
+      { include: [{ model: Story }] }
+    );
+    console.log("userSpace was found succesfully?: ", userSpace);
+    return res.status(200).send({ token, ...user.dataValues, userSpace });
   } catch (error) {
     console.log(error);
     return res.status(400).send({ message: "Something went wrong, sorry" });
@@ -49,7 +56,7 @@ router.post("/signup", async (req, res) => {
       name,
     });
     const newSpace = await Space.create({
-      title: `${newUser.name}'s space'`,
+      title: `${newUser.name}'s space`,
       userId: newUser.id,
     });
 
@@ -75,7 +82,7 @@ router.post("/signup", async (req, res) => {
 router.get("/me", authMiddleware, async (req, res) => {
   // don't send back the password hash
   delete req.user.dataValues["password"];
-  res.status(200).send({ ...req.user.dataValues });
+  res.status(200).send({ ...req.user.dataValues, userSpace });
 });
 
 module.exports = router;
