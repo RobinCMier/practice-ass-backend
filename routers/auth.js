@@ -19,7 +19,14 @@ router.post("/login", async (req, res, next) => {
         .send({ message: "Please provide both email and password" });
     }
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email },
+      include: {
+        model: Space,
+        include: [Story],
+        order: [[Story, "createdAt", "DESC"]],
+      },
+    });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(400).send({
@@ -29,13 +36,7 @@ router.post("/login", async (req, res, next) => {
 
     delete user.dataValues["password"]; // don't send back the password hash
     const token = toJWT({ userId: user.id });
-    console.log("About to try to get userSpace...");
-    const userSpace = Space.findOne(
-      { where: { userId: user.id } },
-      { include: [{ model: Story }] }
-    );
-    console.log("userSpace was found succesfully?: ", userSpace);
-    return res.status(200).send({ token, ...user.dataValues, userSpace });
+    return res.status(200).send({ token, ...user.dataValues });
   } catch (error) {
     console.log(error);
     return res.status(400).send({ message: "Something went wrong, sorry" });
@@ -82,7 +83,13 @@ router.post("/signup", async (req, res) => {
 router.get("/me", authMiddleware, async (req, res) => {
   // don't send back the password hash
   delete req.user.dataValues["password"];
-  res.status(200).send({ ...req.user.dataValues, userSpace });
+  console.log("at /me, what is req user datavalues? ", req.user.dataValues);
+  const space = await Space.findOne({
+    where: { userId: req.user.id },
+    include: [Story],
+  });
+
+  res.status(200).send({ ...req.user.dataValues, space });
 });
 
 module.exports = router;
