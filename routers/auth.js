@@ -8,7 +8,7 @@ const Story = require("../models/").story;
 const { SALT_ROUNDS } = require("../config/constants");
 
 const router = new Router();
-
+//log in
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -42,7 +42,7 @@ router.post("/login", async (req, res, next) => {
     return res.status(400).send({ message: "Something went wrong, sorry" });
   }
 });
-
+//sign up
 router.post("/signup", async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password || !name) {
