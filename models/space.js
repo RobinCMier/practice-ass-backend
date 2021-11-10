@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   space.init(
     {
-      title: DataTypes.STRING,
-      description: { type: DataTypes.TEXT, allowNull: false },
+      title: { type: DataTypes.TEXT, allowNull: false },
+      description: { type: DataTypes.TEXT },
       userId: DataTypes.INTEGER,
       backgroundColor: { type: DataTypes.STRING, defaultValue: "#ffffff" },
       color: { type: DataTypes.STRING, defaultValue: "#000000" },
