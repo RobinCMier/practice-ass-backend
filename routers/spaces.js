@@ -37,6 +37,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 // delete a story
+
 router.delete("/:spaceId/story/:storyId", async (req, res, next) => {
   //id needs to be spaceId
   try {
@@ -54,16 +55,26 @@ router.delete("/:spaceId/story/:storyId", async (req, res, next) => {
     next(e);
   }
 });
-/*TO DO 
-- require a story id (should be found in the button of story?)
-- validate user thru jwt
-- find story by id
-- delete it
-- send updated info abt whole userSpace in response.
-delete everyone named jane:
-await User.destroy({
-  where: {
-    firstName: "Jane"
+
+//add a story
+/*TO DO
+- what data is needed in req.body? 
+-- name, content, imageUrl, spaceId (this can be gotten in reduxstore)
+- ADD A JWT MIDDLEWARE
+*/
+router.post("/:spaceId", async (req, res, next) => {
+  try {
+    const spaceId = parseInt(req.params.spaceId);
+    console.log(`You are requesting put access to space with id ${spaceId}`);
+    const spaceToUpdate = await Space.findByPk(spaceId);
+    if (!spaceToUpdate) {
+      res.status(404).send("Space not found");
+    } else {
+      console.log(`The space title is ${spaceToUpdate.title}`);
+      const newStory = await Story.create({ spaceId, ...req.body });
+      res.json(newStory);
+    }
+  } catch (e) {
+    console.log(`You got an error in creating story endpoint. ${e}`);
   }
 });
- */
