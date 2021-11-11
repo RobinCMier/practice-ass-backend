@@ -38,16 +38,15 @@ router.get("/:id", async (req, res) => {
 });
 // delete a story
 
-router.delete("/:spaceId/story/:storyId", async (req, res, next) => {
+router.delete("/:storyId", async (req, res, next) => {
   //id needs to be spaceId
   try {
-    const spaceId = parseInt(req.params.spaceId);
     const storyId = parseInt(req.params.storyId);
     const toDelete = await Story.findByPk(storyId);
     if (!toDelete) {
       res.status(404).send("This story doesn't exist");
     } else {
-      console.log(`You're gonna delete ${storyId} from ${spaceId}`);
+      console.log(`You're gonna delete ${storyId}`);
       const deleted = await toDelete.destroy();
       res.json(deleted); //sends back an empty array
     }
@@ -58,6 +57,13 @@ router.delete("/:spaceId/story/:storyId", async (req, res, next) => {
 
 //add a story
 /*TO DO
+- a POST endpoint to update space to contain the new story
+- "/:spaceId" 
+- first find the space (await Space.findByPk(spaceId))
+-if not found, send 404 
+- then update the story model with a new story, using:
+const newStory= await Story.create({spaceId, ...req.body});
+res.json(newStory);
 - what data is needed in req.body? 
 -- name, content, imageUrl, spaceId (this can be gotten in reduxstore)
 - ADD A JWT MIDDLEWARE
